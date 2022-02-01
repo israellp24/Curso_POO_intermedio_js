@@ -51,7 +51,7 @@ Object.defineProperty(juan, "editor",{
 
 //----------------------------------------------------------------------------------------------------------------------------
 
-const obj1 = {
+/* const obj1 = {
     a: "a",
     b: "b",
     c: {
@@ -62,7 +62,7 @@ const obj1 = {
         this.a="AAAAAAAA"
     }
 };
-
+ */
 /* const obj2={};
 
 for(prop in obj1){
@@ -131,3 +131,95 @@ function deepCopy(subject){
     
     return copySubjet;
 }
+
+/* const studentBase = {
+    name: undefined,
+    email: undefined,
+    age: undefined,
+    approvedCourses: undefined,
+    learningPaths: undefined,
+    socialMedia:{
+        twitter: undefined,
+        instagram: undefined,
+        facebook: undefined,
+    },
+};
+
+const juan = deepCopy(studentBase);
+//Object.defineProperty(juan, "name", {
+//    value: "Juanito",
+//    configurable: false,
+//});
+Object.seal(juan); */
+
+// Requerimientos de parametros obligatorios
+function requiredParam(param){
+    throw new Error(param + " este parametro es obligatorio,");
+}
+
+//Fabrica de estudiantes
+function createStudent({
+    name = requiredParam("name"),
+    email= requiredParam("email"),
+    age,
+    twitter,
+    instagram,
+    facebook,
+    approveCourses = [],
+    learningPaths = [],
+} = {}){
+    const private ={
+        "_name":name
+    };
+    const public ={
+        email,
+        age,
+        approveCourses,
+        learningPaths,
+        socialMedia:{
+            twitter,
+            instagram,
+            facebook,
+        },
+        get name(){
+            return private["_name"];
+        },
+        set name(newName){
+            if(newName.length !=0){
+                private["_name"] = newName;
+            }else{
+                console.warn("Tu nombre debe tener al menos un carácter");
+            }
+        }
+/*         readName(){
+            return private["_name"];
+        },
+        changeName(newName){
+            private["_name"] = newName;
+        }, */
+    };
+
+/*     Object.defineProperty(public, "readName",{
+        writable:false,
+        configurable:false,
+    });
+
+    Object.defineProperty(public, "changeName",{
+        writable:false,
+        configurable:false,
+    }); */
+
+
+    return public;
+
+}
+
+
+const juan = createStudent(
+     {
+        name:"Juanito",
+        age: 18,
+        email:"juantito@frijolitos.com",
+        twitter : "@juanito"
+    } 
+);

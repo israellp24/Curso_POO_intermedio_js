@@ -157,6 +157,35 @@ function requiredParam(param){
     throw new Error(param + " este parametro es obligatorio,");
 }
 
+/* ----------------------Sin uso de prototipos----------------------------------------
+function createLearningPath({
+    name = requiredParam("name"),
+    courses=[],
+} = {}){
+    const private ={
+        "_name": name,
+        "_courses": courses,
+    };
+
+    const public ={
+        get name(){
+            return private["_name"];
+        },
+        set name(newName){
+            if(newName.length !=0){
+                private["_name"] = newName;
+            }else{
+                console.warn("Tu nombre debe tener al menos un carácter");
+            }
+        },
+        get courses(){
+            return private["_courses"];
+        },
+    };
+
+    return public;
+} 
+
 //Fabrica de estudiantes
 function createStudent({
     name = requiredParam("name"),
@@ -169,13 +198,13 @@ function createStudent({
     learningPaths = [],
 } = {}){
     const private ={
-        "_name":name
+        "_name":name,
+        "_learningPaths": learningPaths
     };
     const public ={
         email,
         age,
         approveCourses,
-        learningPaths,
         socialMedia:{
             twitter,
             instagram,
@@ -190,30 +219,51 @@ function createStudent({
             }else{
                 console.warn("Tu nombre debe tener al menos un carácter");
             }
-        }
-/*         readName(){
-            return private["_name"];
         },
-        changeName(newName){
-            private["_name"] = newName;
-        }, */
+        get learningPaths(){
+            return private["_learningPaths"];
+        },
+        set learningPaths(newLP){
+            if(!newLP.name){
+                console.warn("Tu LP no tiene la propiedad name");
+                return;
+            }
+
+            if(!newLP.courses){
+                console.warn("Tu LP no tiene courses");
+                return;
+            }
+
+            if(!isArray(newLP.courses)){
+                console.warn("Tu LP no es una lista de cursos");
+                return;
+            }
+
+            private["_learningPaths"].push(newLP);
+
+        }
+        //readName(){
+        //    return private["_name"];
+        //},
+        //changeName(newName){
+        //    private["_name"] = newName;
+        //}, 
     };
 
-/*     Object.defineProperty(public, "readName",{
-        writable:false,
-        configurable:false,
-    });
-
-    Object.defineProperty(public, "changeName",{
-        writable:false,
-        configurable:false,
-    }); */
+    //Object.defineProperty(public, "readName",{
+    //    writable:false,
+    //    configurable:false,
+    //});
+//
+    //Object.defineProperty(public, "changeName",{
+    //    writable:false,
+    //    configurable:false,
+    //}); 
 
 
     return public;
 
 }
-
 
 const juan = createStudent(
      {
@@ -223,3 +273,80 @@ const juan = createStudent(
         twitter : "@juanito"
     } 
 );
+
+
+*/
+
+
+
+// ----------------------Con uso de prototipos----------------------------------------
+//Fabrica de rutas de aprendizaje
+function LearningPath({
+    name = requiredParam("name"),
+    courses=[],
+} = {}){
+    this.name = name;
+    this.courses= courses;
+
+}
+
+//Fabrica de estudiantes
+function Student({
+    name = requiredParam("name"),
+    email= requiredParam("email"),
+    age,
+    twitter,
+    instagram,
+    facebook,
+    approveCourses = [],
+    learningPaths = [],
+} = {}){
+    this.name= name;
+    this.email= email;
+    this.age= age;
+    this.approveCourses= approveCourses;
+    this.socialMedia ={
+        twitter,
+        instagram,
+        facebook,
+    };
+
+    if(isArray(learningPaths)){    
+        this.learningPaths=[];    
+        for (learningPathIndex in learningPaths) {
+/*             console.log(
+                learningPaths[learningPathIndex] instanceof LearningPath
+            ) */
+            if(learningPaths[learningPathIndex] instanceof LearningPath){
+                this.learningPaths.push(learningPaths[learningPathIndex] );
+            }
+        }
+    }
+}
+
+const escuelaWeb = new LearningPath({
+  name: "Escuela de desarrollo",
+});
+
+const escuelaDataScience = new LearningPath({
+  name: "Escuela de Data Science",
+});
+
+const juan = new Student({
+    name:"Juanito",
+    age: 18,
+    email:"juantito@frijolitos.com",
+    twitter : "@juanito",
+    learningPaths:[
+        escuelaWeb,
+        escuelaDataScience,
+        {
+            name: "Escuela de Data Science",
+            courses:[]
+        }
+    ]
+});
+
+
+
+

@@ -9,3 +9,13 @@ El método JSON.stringify() convierte un objeto o valor de JavaScript en una cad
 
 JSON.parse()
 El método JSON.parse() analiza una cadena de texto (string) como JSON, transformando opcionalmente el valor producido por el análisis.
+
+
+**RORO **= RO -> Recibir un objeto, RO -> Retornar un objeto
+Dentro de una función, recibimos un solo parámetro que es un objecto, el cual internamente contiene varias propiedades, con las cuales retornara otro nuevo objeto.
+
+
+For … in devuelve los indices o las llaves del array u objeto que esta siendo iterado.
+For … of devuelve ya directamente los valores.
+.
+Personalmente, por esa misma razón casi siempre me gusta dejar exclusivamente el for ... in para objetos y el for ... of para arrays.

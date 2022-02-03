@@ -132,6 +132,52 @@ function deepCopy(subject){
     return copySubjet;
 }
 
+
+
+function SuperObject(){}
+
+SuperObject.isObject = function isObject(subject){
+    return typeof subject=="object";
+}
+
+SuperObject.deepCopy = function deepCopy(subject){
+    let copySubjet;
+
+    const subjectIsObject = isObject(subject);
+    const subjectIsArray = isArray(subject);
+
+    if(subjectIsArray){
+        copySubjet=[];
+    }else if(subjectIsObject){
+        copySubjet={};
+    }else{
+        return subject;
+    }
+
+    for(key in subject){
+        const keyIsObject = isObject(subject[key]);
+
+        if(keyIsObject){
+            copySubjet[key]=deepCopy(subject[key]);
+        }else{
+            if(subjectIsArray){
+                copySubjet.push(subject[key]);
+            }else{
+                copySubjet[key]=subject[key];
+            }
+        }
+    }
+    
+    return copySubjet;
+}
+
+
+// Requerimientos de parametros obligatorios
+function requiredParam(param){
+    throw new Error(param + " este parametro es obligatorio,");
+}
+
+
 /* const studentBase = {
     name: undefined,
     email: undefined,
@@ -152,10 +198,7 @@ const juan = deepCopy(studentBase);
 //});
 Object.seal(juan); */
 
-// Requerimientos de parametros obligatorios
-function requiredParam(param){
-    throw new Error(param + " este parametro es obligatorio,");
-}
+
 
 /* ----------------------Sin uso de prototipos----------------------------------------
 function createLearningPath({
@@ -311,18 +354,31 @@ function Student({
         facebook,
     };
 
-    if(isArray(learningPaths)){    
-        this.learningPaths=[];    
-        for (learningPathIndex in learningPaths) {
-/*             console.log(
-                learningPaths[learningPathIndex] instanceof LearningPath
-            ) */
-            if(learningPaths[learningPathIndex] instanceof LearningPath){
-                this.learningPaths.push(learningPaths[learningPathIndex] );
+    const private = {
+        "_learningPaths": [],
+    };
+
+    Object.defineProperty(this, "learningPaths",{
+        get(){
+            return private["_learningPaths"];
+        },
+        set(newLP){
+    
+            if(newLP instanceof LearningPath){
+                private["_learningPaths"].push(newLP);
+            }else{
+                console.warn("Alguno de los learningPaths no es una instancia del prototipo LP");
             }
-        }
-    }
+        },
+    });
+    
+    for (learningPathIndex in learningPaths) {
+        this.learningPaths = learningPaths[learningPathIndex]
+    } 
+    
 }
+
+
 
 const escuelaWeb = new LearningPath({
   name: "Escuela de desarrollo",
